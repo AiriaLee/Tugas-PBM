@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
         body: jsonEncode({
           "name": "Tugas PBM",
           "price": 32450000,
-          "description": "Aplikasi katalog produk Flutter",
+          "description": "Aplikasi katalog produk album stray kids",
           "github_url": "https://github.com/AiriaLee/Tugas-PBM.git",
         }),
       );
