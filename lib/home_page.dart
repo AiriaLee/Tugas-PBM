@@ -98,45 +98,6 @@ class _HomePageState extends State<HomePage> {
       debugPrint(e.toString());
     }
   }
-
-  // ✅ SUBMIT TUGAS — ditaruh setelah deleteProduct()
-  Future<void> submitTugas() async {
-    try {
-      var response = await http.post(
-        Uri.parse("https://task.itprojects.web.id/api/products/submit"),
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode({
-          "name": "Tugas PBM",
-          "price": 32450000,
-          "description": "Aplikasi katalog produk album stray kids",
-          "github_url": "https://github.com/AiriaLee/Tugas-PBM.git",
-        }),
-      );
-      if (!mounted) return;
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Tugas berhasil dikumpulkan!"),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Gagal submit: ${response.statusCode}"),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
   void showAddProductDialog() {
     final nameCtrl = TextEditingController();
     final priceCtrl = TextEditingController();
@@ -283,14 +244,6 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
-        // ✅ ACTIONS — tombol submit tugas di pojok kanan AppBar
-        actions: [
-          IconButton(
-            onPressed: submitTugas,
-            icon: const Icon(Icons.upload_file, color: Colors.white),
-            tooltip: 'Kumpulkan Tugas',
-          ),
-        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: showAddProductDialog,
