@@ -99,6 +99,44 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // ✅ SUBMIT TUGAS — ditaruh setelah deleteProduct()
+  Future<void> submitTugas() async {
+    try {
+      var response = await http.post(
+        Uri.parse("https://task.itprojects.web.id/api/products/submit"),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "name": "Tugas PBM",
+          "price": 32450000,
+          "description": "Aplikasi katalog produk Flutter",
+          "github_url": "https://github.com/AiriaLee/Tugas-PBM.git",
+        }),
+      );
+      if (!mounted) return;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Tugas berhasil dikumpulkan!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Gagal submit: ${response.statusCode}"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   void showAddProductDialog() {
     final nameCtrl = TextEditingController();
     final priceCtrl = TextEditingController();
@@ -205,13 +243,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   String getImageForProduct(String name) {
-    if (name.toLowerCase().contains('go live')) return 'assets/images/Album_Go_Live.jpeg';
-    if (name.toLowerCase().contains('noeasy')) return 'assets/images/Album_NoEasy.jpg';
-    if (name.toLowerCase().contains('oddinary')) return 'assets/images/Album_Oddinary.jpg';
-    if (name.toLowerCase().contains('maxident')) return 'assets/images/Album_Maxident.jpg';
-    if (name.toLowerCase().contains('5') && name.toLowerCase().contains('star')) return 'assets/images/Album_5Star.jpg';
-    if (name.toLowerCase().contains('ate')) return 'assets/images/Album_ate.jpg';
-    if (name.toLowerCase().contains('do')) return 'assets/images/Album_DoIt.jpg';
+    if (name.toLowerCase().contains('go live')) {
+      return 'assets/images/Album_Go_Live.jpeg';
+    }
+    if (name.toLowerCase().contains('noeasy')) {
+      return 'assets/images/Album_NoEasy.jpg';
+    }
+    if (name.toLowerCase().contains('oddinary')) {
+      return 'assets/images/Album_Oddinary.jpg';
+    }
+    if (name.toLowerCase().contains('maxident')) {
+      return 'assets/images/Album_Maxident.jpg';
+    }
+    if (name.toLowerCase().contains('5') && name.toLowerCase().contains('star')) {
+      return 'assets/images/Album_5Star.jpg';
+    }
+    if (name.toLowerCase().contains('ate')) {
+      return 'assets/images/Album_ate.jpg';
+    }
+    if (name.toLowerCase().contains('do')) {
+      return 'assets/images/Album_DoIt.jpg';
+    }
     return 'assets/images/Album_Go_Live.jpeg';
   }
 
@@ -231,6 +283,14 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
+        // ✅ ACTIONS — tombol submit tugas di pojok kanan AppBar
+        actions: [
+          IconButton(
+            onPressed: submitTugas,
+            icon: const Icon(Icons.upload_file, color: Colors.white),
+            tooltip: 'Kumpulkan Tugas',
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: showAddProductDialog,
