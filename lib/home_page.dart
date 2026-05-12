@@ -74,6 +74,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> deleteProduct(int id) async {
+    try {
+      var response = await http.delete(
+        Uri.parse("https://task.itprojects.web.id/api/products/$id"),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        fetchProducts();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Produk berhasil dihapus"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   void showAddProductDialog() {
     final nameCtrl = TextEditingController();
     final priceCtrl = TextEditingController();
@@ -253,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                             height: 50,
                             fit: BoxFit.cover,
                           ),
-                        ), // ✅ tutup ClipRRect
+                        ),
                         title: Text(
                           p.name,
                           style: const TextStyle(
@@ -265,12 +290,54 @@ class _HomePageState extends State<HomePage> {
                           p.description,
                           style: const TextStyle(color: Colors.white54),
                         ),
-                        trailing: Text(
-                          "Rp ${p.price.toStringAsFixed(0)}",
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Rp ${p.price.toStringAsFixed(0)}",
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    backgroundColor: Colors.grey.shade900,
+                                    title: const Text(
+                                      "Hapus Produk",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    content: Text(
+                                      "Yakin ingin menghapus '${p.name}'?",
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("Batal",
+                                            style: TextStyle(color: Colors.white54)),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          deleteProduct(p.id);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red),
+                                        child: const Text("Hapus",
+                                            style: TextStyle(color: Colors.white)),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                            ),
+                          ],
                         ),
                       ),
                     );
